@@ -1,0 +1,24 @@
+{
+  "name": "keksobooking-node",
+  "version": "1.0.0",
+  "description": "This is backend for keksobooking",
+  "main": "index.js",
+  "scripts": {
+    "test:lint": "eslint .",
+    "test": "npm run test:lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sergeyamator/41580-keksobooking-1.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sergeyamator/41580-keksobooking-1/issues"
+  },
+  "homepage": "https://github.com/sergeyamator/41580-keksobooking-1#readme",
+  "devDependencies": {
+    "eslint": "4.17.0",
+    "eslint-config-htmlacademy": "0.4.2"
+  }
+}
