@@ -12,8 +12,8 @@ module.exports = {
   '--license': () => license.execute(),
   '--version': () => version.execute(),
   '--help': () => help.execute(),
-  "unknownCommand": (arg) => {
+  unknownCommand: (arg) => {
     unknownCommand.execute(arg);
   },
-  "empty": () => empty.execute(),
+  empty: () => empty.execute(),
 };
