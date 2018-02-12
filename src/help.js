@@ -8,11 +8,11 @@ module.exports = {
   description: `Shows help instructions`,
   execute() {
     console.log(`Доступные команды: 
-       --${this.name} ${this.description}
-       --${license.name} ${license.description}
-       --${version.name} ${version.description}
-       --${description.name} ${description.description}
-       --${author.name} ${author.description}
+       --${this.name.grey} - ${this.description.green}
+       --${license.name.grey} - ${license.description.green}
+       --${version.name.grey} - ${version.description.green}
+       --${description.name.grey} - ${description.description.green}
+       --${author.name.grey} - ${author.description.green}
     `);
   }
 };
