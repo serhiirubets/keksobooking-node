@@ -1,3 +1,5 @@
+require(`colors`);
+
 const execute = require(`./src/execute`);
 const [arg] = process.argv.slice(2);
 
