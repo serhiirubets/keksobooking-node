@@ -5,6 +5,11 @@ Thumbs.db
 # Файлы редактора
 .idea
 *.sublime*
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
 # Вспомогательные файлы
 *.log
