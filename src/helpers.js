@@ -3,6 +3,8 @@ const getRandomNumber = (min, max) => {
   return Math.floor(rand);
 };
 
+const isNumber = (number) => typeof number === `number` && isFinite(number);
+
 module.exports.getRandomUniqArray = (source, length) => {
   let randomUniqArray = [];
 
@@ -18,3 +20,4 @@ module.exports.getRandomUniqArray = (source, length) => {
 };
 
 module.exports.getRandomNumber = getRandomNumber;
+module.exports.isNumber = isNumber;
