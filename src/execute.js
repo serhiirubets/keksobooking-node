@@ -5,6 +5,7 @@ const version = require(`./version`);
 const unknownCommand = require(`./unknown-command`);
 const empty = require(`./empty`);
 const help = require(`./help`);
+const server = require(`./server`);
 
 module.exports = {
   '--author': () => author.execute(),
@@ -12,6 +13,7 @@ module.exports = {
   '--license': () => license.execute(),
   '--version': () => version.execute(),
   '--help': () => help.execute(),
+  '--server': () => server.execute(),
   'unknownCommand': (arg) => {
     unknownCommand.execute(arg);
   },
