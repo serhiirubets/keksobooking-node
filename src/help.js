@@ -2,6 +2,7 @@ const version = require(`./version`);
 const description = require(`./description`);
 const author = require(`./author`);
 const license = require(`./license`);
+const server = require(`./server`);
 
 module.exports = {
   name: `help`,
@@ -13,6 +14,8 @@ module.exports = {
        --${version.name.grey} - ${version.description.green}
        --${description.name.grey} - ${description.description.green}
        --${author.name.grey} - ${author.description.green}
+       --${server.name.grey} - ${server.description.green}
     `);
+    process.exit(0);
   }
 };

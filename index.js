@@ -11,7 +11,7 @@ function start() {
 
   if (execute[arg]) {
     execute[arg]();
-    process.exit(0);
+    return;
   }
 
   execute.unknownCommand(arg);
