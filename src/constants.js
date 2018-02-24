@@ -18,8 +18,8 @@ module.exports.room = {
 };
 
 module.exports.guests = {
-  MIN_GUESTS_COUNT: 0,
-  MAX_GUESTS_COUNT: 100
+  MIN: 0,
+  MAX: 100
 };
 
 module.exports.times = [`12:00`, `13:00`, `14:00`];

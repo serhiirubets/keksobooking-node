@@ -54,6 +54,7 @@ module.exports.generateEntity = (i) => {
       description: ``,
       photos: [...photoUrls.sort(() => getRandomNumber(-1, 1))]
     },
-    location: coords
+    location: coords,
+    date: Date.now()
   };
 };
