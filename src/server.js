@@ -1,5 +1,5 @@
 const express = require(`express`);
-const config = require(`./config`);
+const config = require(`./common/config`);
 const routes = require(`./routes`);
 const bodyParser = require(`body-parser`);
 
@@ -7,10 +7,7 @@ const hostname = `127.0.0.1`;
 const port = process.argv[3] || config.server.port;
 const app = express();
 
-// parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: false}));
-
-// parse application/json
 app.use(bodyParser.json());
 
 app.use(express.static(`static`));

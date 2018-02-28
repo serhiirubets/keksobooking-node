@@ -1,3 +1,5 @@
+const names = [`Keks`, `Pavel`, `Nikolay`, `Alex`, `Ulyana`, `Anastasyia`, `Julia`];
+
 const getRandomNumber = (min, max) => {
   let rand = min + Math.random() * (max + 1 - min);
   return Math.floor(rand);
@@ -19,5 +21,8 @@ module.exports.getRandomUniqArray = (source, length) => {
   return randomUniqArray;
 };
 
+const getRandomName = () => names[getRandomNumber(0, names.length - 1)];
+
 module.exports.getRandomNumber = getRandomNumber;
 module.exports.isNumber = isNumber;
+module.exports.getRandomName = getRandomName;

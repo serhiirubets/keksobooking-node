@@ -5,7 +5,7 @@ const version = require(`./version`);
 const unknownCommand = require(`./unknown-command`);
 const empty = require(`./empty`);
 const help = require(`./help`);
-const server = require(`./server`);
+const server = require(`../server`);
 
 module.exports = {
   '--author': () => author.execute(),

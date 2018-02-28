@@ -1,5 +1,5 @@
-const packageInfo = require(`../package.json`);
-const createFileWithEntity = require(`./createFileWithEntity`);
+const packageInfo = require(`../../package.json`);
+const createFileWithEntity = require(`../generator/createFileWithEntity`);
 
 module.exports = {
   name: `Empty`,

@@ -1,8 +1,11 @@
-const {generateEntity} = require(`../generateEntity`);
+const validator = require(`../common/validation`);
+const {generateEntity} = require(`../generator/generateEntity`);
+const {getRandomName} = require(`../common/helpers`);
+
 const DEFAULT_DATA_LIMIT = 20;
+const DEFAULT_DATA_LENGTH = 20;
 const DEFAULT_SKIP_NUMBER = 0;
 
-// const absoluteAvatarsPath = path.join(__dirname, `..`, `static`, `img`, `avatars`);
 const generateEntities = (length) => {
   const data = [];
 
@@ -13,7 +16,7 @@ const generateEntities = (length) => {
   return data;
 };
 
-const entities = generateEntities(20);
+const entities = generateEntities(DEFAULT_DATA_LENGTH);
 
 module.exports.all = (req, res) => {
   const limit = req.query.limit || DEFAULT_DATA_LIMIT;
@@ -54,6 +57,20 @@ module.exports.avatar = (req, res) => {
 
 module.exports.save = (req, res) => {
   const {
+    title,
+    address,
+    description,
+    price,
+    type,
+    rooms,
+    guests,
+    checkin,
+    checkout,
+    features
+  } = req.body;
+
+  const name = req.body.name || getRandomName();
+  const errors = validator({
     name,
     title,
     address,
@@ -64,7 +81,14 @@ module.exports.save = (req, res) => {
     guests,
     checkin,
     checkout,
-    features} = req.body;
+    features
+  });
+
+  if (errors.length) {
+    res.status(400);
+    res.json(errors);
+    return;
+  }
 
   res.json({
     name,

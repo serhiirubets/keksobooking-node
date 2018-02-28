@@ -2,6 +2,9 @@ const assert = require(`assert`);
 const request = require(`supertest`);
 const app = require(`../src/server`).getServer();
 
+const title = `Маленькая квартирка рядом с парком Маленькая квартирка рядом с парком Маленькая чистая квратира на краю парка.`;
+const address = `Маленькая квартирка рядом с парком`;
+
 describe(`GET /api/offers`, function () {
   const expectedDataLength = 4;
 
@@ -68,7 +71,7 @@ describe(`GET /api/offers`, function () {
         .expect(`Content-Type`, /json/);
   });
 
-  it(`Should return offer's avatar by date`, () => {
+  it(`Should return offer\`s avatar by date`, () => {
     return request(app)
         .get(`/api/offers/1519472613744/avatar`)
         .expect(200);
@@ -88,7 +91,7 @@ describe(`POST /api/offers`, function () {
     return request(app).post(`/api/offers`).
         send({
           name: `Pavel`,
-          title: `Маленькая квартирка рядом с парком`,
+          title,
           address: `102-0075 Tōkyō-to, Chiyoda-ku, Sanbanchō`,
           description: `Маленькая чистая квратира на краю парка. Без интернета, регистрации и СМС.`,
           price: 30000,
@@ -101,7 +104,7 @@ describe(`POST /api/offers`, function () {
         }).
         expect(200, {
           name: `Pavel`,
-          title: `Маленькая квартирка рядом с парком`,
+          title,
           address: `102-0075 Tōkyō-to, Chiyoda-ku, Sanbanchō`,
           description: `Маленькая чистая квратира на краю парка. Без интернета, регистрации и СМС.`,
           price: 30000,
@@ -116,22 +119,46 @@ describe(`POST /api/offers`, function () {
 
   it(`should consume form-data`, () => {
     return request(app).post(`/api/offers`).
-        field(`name`, `Pavel`).
-        field(`title`, `Маленькая квартирка рядом с парком`).
+        field(`type`, `bungalo`).
+        field(`title`, title).
+        field(`address`, address).
+        field(`price`, `2`).
+        field(`checkin`, `12:00`).
+        field(`checkout`, `12:00`).
+        field(`rooms`, `5`).
+        field(`name`, `keksik`).
         expect(200, {
-          name: `Pavel`,
-          title: `Маленькая квартирка рядом с парком`,
+          type: `bungalo`,
+          title,
+          price: `2`,
+          address: `Маленькая квартирка рядом с парком`,
+          checkin: `12:00`,
+          checkout: `12:00`,
+          rooms: `5`,
+          name: `keksik`
         });
   });
 
   it(`should consume form-data with avatar`, () => {
     return request(app).post(`/api/offers`).
-        field(`name`, `Pavel`).
-        field(`title`, `Маленькая квартирка рядом с парком`).
+        field(`title`, title).
+        field(`type`, `bungalo`).
+        field(`address`, address).
+        field(`price`, `2`).
+        field(`checkin`, `12:00`).
+        field(`checkout`, `12:00`).
+        field(`rooms`, `5`).
+        field(`name`, `keksik`).
         attach(`avatar`, `test/fixtures/keks.png`).
         expect(200, {
-          name: `Pavel`,
-          title: `Маленькая квартирка рядом с парком`,
+          type: `bungalo`,
+          title,
+          price: `2`,
+          address: `Маленькая квартирка рядом с парком`,
+          checkin: `12:00`,
+          checkout: `12:00`,
+          rooms: `5`,
+          name: `keksik`
         });
   });
 });
