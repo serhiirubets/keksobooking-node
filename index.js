@@ -1,6 +1,6 @@
 require(`colors`);
 
-const execute = require(`./src/execute`);
+const execute = require(`./src/cli/execute`);
 const [arg] = process.argv.slice(2);
 
 function start() {

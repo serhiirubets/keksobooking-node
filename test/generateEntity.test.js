@@ -6,8 +6,8 @@ const {
   types,
   times,
   photoUrls
-} = require(`../src/constants`);
-const {generateEntity, generateLocation} = require(`../src/generateEntity`);
+} = require(`../src/common/constants`);
+const {generateEntity, generateLocation} = require(`../src/generator/generateEntity`);
 
 const anyIndex = 0;
 let generatedData;
