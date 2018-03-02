@@ -1,106 +1,106 @@
+const {Router} = require(`express`);
+const bodyParser = require(`body-parser`);
 const validator = require(`../common/validation`);
-const {generateEntity} = require(`../generator/generateEntity`);
 const {getRandomName} = require(`../common/helpers`);
+const createStreamFromBuffer = require(`../common/buffer-to-stream`);
 
 const DEFAULT_DATA_LIMIT = 20;
-const DEFAULT_DATA_LENGTH = 20;
 const DEFAULT_SKIP_NUMBER = 0;
 
-const generateEntities = (length) => {
-  const data = [];
+const multer = require(`multer`);
+const upload = multer({storage: multer.memoryStorage()});
+const offersRouter = new Router();
 
-  for (let i = 0; i < length; i++) {
-    data.push(generateEntity(i));
-  }
+offersRouter.use(bodyParser.urlencoded({extended: false}));
+offersRouter.use(bodyParser.json());
 
-  return data;
+const toPage = async (cursor, skip = 0, limit = 20) => {
+  return {
+    data: await (cursor.skip(skip).limit(limit).toArray()),
+    total: await cursor.count(),
+    skip,
+    limit,
+  };
 };
 
-const entities = generateEntities(DEFAULT_DATA_LENGTH);
-
-module.exports.all = (req, res) => {
+const getAllOffers = async (req, res) => {
   const limit = req.query.limit || DEFAULT_DATA_LIMIT;
   const skipNumber = req.query.skip || DEFAULT_SKIP_NUMBER;
-  const entitiesForResponse = entities.slice(skipNumber, limit);
-  const response = {
-    data: entitiesForResponse,
-    skip: skipNumber,
-    total: entitiesForResponse.length,
-    limit
-  };
 
-  res.json(response);
+  res.send(await toPage(await offersRouter.offersStore.getAllOffers(), skipNumber, limit));
 };
 
-module.exports.date = (req, res) => {
+const getOfferByDate = async (req, res) => {
   const date = Number(req.params[`date`].toLowerCase());
-
-  res.json(entities.find((it) => it.date === date));
+  const offersPromise = await offersRouter.offersStore.getAllOffers();
+  const offers = await offersPromise.toArray();
+  res.json(offers.find((it) => it.date === date));
 };
 
-module.exports.avatar = (req, res) => {
+const getAvatar = async (req, res) => {
   const date = Number(req.params[`date`].toLowerCase());
-  const entity = entities.find((it) => it.date === date);
+  const offersPromise = await offersRouter.offersStore.getAllOffers();
+  const offers = await offersPromise.toArray();
+  const offer = offers.find((it) => it.date === date);
 
-  if (!entity) {
+  if (!offer) {
     res.send(`Offer with this date is not exist`);
     return;
   }
-  const avatar = entity.author ? entity.author.avatar : null;
+  const avatar = offer.avatar;
 
-  if (avatar) {
-    res.send(avatar);
-  } else {
-    res.send(`Offer with this date is not exist`);
+  if (!avatar) {
+    throw new Error(`Wizard with name "${offer}" didn't upload avatar`);
   }
+
+  const {info, stream} = await offersRouter.imageStore.get(avatar.path);
+  if (!info) {
+    throw new Error(`File was not found`);
+  }
+
+  res.set(`content-type`, avatar.mimetype);
+  res.set(`content-length`, info.length);
+  res.status(200);
+  stream.pipe(res);
 };
 
-module.exports.save = (req, res) => {
-  const {
-    title,
-    address,
-    description,
-    price,
-    type,
-    rooms,
-    guests,
-    checkin,
-    checkout,
-    features
-  } = req.body;
+const saveOffer = async (req, res) => {
+  const responseData = Object.assign({}, req.body, {name: req.body.name || getRandomName()});
+  const errors = validator(responseData);
 
-  const name = req.body.name || getRandomName();
-  const errors = validator({
-    name,
-    title,
-    address,
-    description,
-    price,
-    type,
-    rooms,
-    guests,
-    checkin,
-    checkout,
-    features
-  });
-
+  responseData.date = Date.now();
   if (errors.length) {
     res.status(400);
     res.json(errors);
     return;
+
+  }
+  const avatar = req.file;
+
+  if (avatar) {
+    responseData.avatar = avatar;
+    const avatarInfo = {
+      path: `/api/offers/${responseData.date}/avatar`,
+      mimetype: avatar.mimetype
+    };
+
+    await offersRouter.imageStore.save(avatarInfo.path, createStreamFromBuffer(avatar.buffer));
+    responseData.avatar = avatarInfo;
   }
 
-  res.json({
-    name,
-    title,
-    address,
-    description,
-    price,
-    type,
-    rooms,
-    guests,
-    checkin,
-    checkout,
-    features
-  });
+  await offersRouter.offersStore.save(responseData);
+  res.send(responseData);
 };
+
+offersRouter.get(`/`, getAllOffers);
+offersRouter.post(``, upload.single(`avatar`), saveOffer);
+offersRouter.get(`/:date`, getOfferByDate);
+
+offersRouter.get(`/:date/avatar`, getAvatar);
+
+module.exports = (offersStore, imageStore) => {
+  offersRouter.offersStore = offersStore;
+  offersRouter.imageStore = imageStore;
+  return offersRouter;
+};
+

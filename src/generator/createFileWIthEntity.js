@@ -17,13 +17,13 @@ const greeting = () => {
   console.log(greetingMessage);
 };
 
-let progress = {};
-
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
   prompt: `OHAI>`
 });
+
+let progress = {};
 
 rl.prompt();
 

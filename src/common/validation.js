@@ -1,4 +1,5 @@
-const isHHMMFormat = /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
+const {validateRules} = require(`../common/config`);
+
 const rules = {
   title(title) {
     if (!title) {
@@ -8,10 +9,10 @@ const rules = {
         fieldName: `title`,
       };
     }
-    if (title.length <= 30 || title.ßlength >= 140) {
+    if (title.length <= validateRules.title.min || title.length >= validateRules.title.max) {
       return {
         error: `Validation Error`,
-        errorMessage: `Заголовок должен быть в переделах 30 ... 140 символов`,
+        errorMessage: `Заголовок должен быть в переделах ${validateRules.title.min} ... ${validateRules.title.max} символов`,
         fieldName: `title`,
       };
     }
@@ -29,11 +30,11 @@ const rules = {
       };
     }
 
-    if (![`flat`, `house`, `bungalo`, `palace`].includes(type)) {
+    if (!validateRules.types.includes(type)) {
       return {
         error: `Validation Error`,
         fieldName: `type`,
-        errorMessage: `Поле type - должно быть значением одно из flat, house, bungalo, palace`
+        errorMessage: `Поле type - должно быть значением одно из ${validateRules.types.toString()}`
       };
     }
 
@@ -48,11 +49,11 @@ const rules = {
       };
     }
 
-    if (price < 0 || price > 100000) {
+    if (price < validateRules.price.min || price > validateRules.price.max) {
       return {
         error: `Validation Error`,
         fieldName: `price`,
-        errorMessage: `Поле price - число в интервале от 1 до 100 000`
+        errorMessage: `Поле price - число в интервале от ${validateRules.price.min} до ${validateRules.price.max}`
       };
     }
 
@@ -67,11 +68,11 @@ const rules = {
       };
     }
 
-    if (address.length > 100) {
+    if (address.length > validateRules.address.max) {
       return {
         error: `Validation Error`,
         fieldName: `address`,
-        errorMessage: `Поле address должно быть размером до 100 символов`
+        errorMessage: `Поле address должно быть размером до ${validateRules.address.max} символов`
       };
     }
 
@@ -86,7 +87,7 @@ const rules = {
       };
     }
 
-    if (!isHHMMFormat.test(time)) {
+    if (!validateRules.HHMMFormat.test(time)) {
       return {
         error: `Validation Error`,
         fieldName: `checkin`,
@@ -105,7 +106,7 @@ const rules = {
       };
     }
 
-    if (!isHHMMFormat.test(time)) {
+    if (!validateRules.HHMMFormat.test(time)) {
       return {
         error: `Validation Error`,
         fieldName: `checkout`,
@@ -124,18 +125,18 @@ const rules = {
       };
     }
 
-    if (rooms < 0 || rooms > 1000) {
+    if (rooms < validateRules.rooms.min || rooms > validateRules.rooms.max) {
       return {
         error: `Validation Error`,
         fieldName: `rooms`,
-        errorMessage: `Поле rooms должно находиться в интервале от 0 до 1000`
+        errorMessage: `Поле rooms должно находиться в интервале от ${validateRules.rooms.min} до ${validateRules.rooms.max}`
       };
     }
 
     return false;
   },
   features(features) {
-    if (features && features.length !== new Set(features).size) {
+    if (features instanceof Array && features.length !== new Set(features).size) {
       return {
         error: `Validation Error`,
         fieldName: `features`,
