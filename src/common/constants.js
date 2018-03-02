@@ -10,8 +10,6 @@ module.exports.price = {
   MAX: 1000000
 };
 
-module.exports.types = [`flat`, `palace`, `house`, `bungalo`];
-
 module.exports.room = {
   MIN_ROOM_COUNT: 0,
   MAX_ROOM_COUNT: 5
@@ -22,6 +20,7 @@ module.exports.guests = {
   MAX: 100
 };
 
+module.exports.types = [`flat`, `palace`, `house`, `bungalo`];
 module.exports.times = [`12:00`, `13:00`, `14:00`];
 
 module.exports.features = [

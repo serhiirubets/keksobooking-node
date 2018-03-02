@@ -7,7 +7,7 @@ const getRandomNumber = (min, max) => {
 
 const isNumber = (number) => typeof number === `number` && isFinite(number);
 
-module.exports.getRandomUniqArray = (source, length) => {
+const getRandomUniqArray = (source, length) => {
   let randomUniqArray = [];
 
   for (let i = 0; i < length; i++) {
@@ -22,7 +22,11 @@ module.exports.getRandomUniqArray = (source, length) => {
 };
 
 const getRandomName = () => names[getRandomNumber(0, names.length - 1)];
+const asyncHelper = (fn) => (req, res, next) => fn(req, res, next).catch(next);
 
 module.exports.getRandomNumber = getRandomNumber;
 module.exports.isNumber = isNumber;
 module.exports.getRandomName = getRandomName;
+module.exports.getRandomUniqArray = getRandomUniqArray;
+module.exports.asyncHelper = asyncHelper;
+

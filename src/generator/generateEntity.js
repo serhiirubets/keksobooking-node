@@ -33,6 +33,9 @@ module.exports.generateLocation = generateLocation;
 module.exports.generateEntity = (i) => {
   const coords = generateLocation();
   const time = times[getRandomNumber(0, times.length - 1)];
+  if (!i) {
+    i = 1;
+  }
 
   return {
     author: {

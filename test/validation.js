@@ -1,6 +1,10 @@
 const request = require(`supertest`);
 const assert = require(`assert`);
-const app = require(`../src/server`).getServer();
+const mockOffersRouter = require(`./mock-offers-router`);
+const {status} = require(`../src/common/config`);
+const app = require(`express`)();
+
+app.use(`/api/offers`, mockOffersRouter);
 
 const title = `Маленькая квартирка рядом с парком Маленькая квартирка рядом с парком Маленькая чистая квратира на краю парка.`;
 const address = `Маленькая квартирка рядом с парком`;
@@ -25,7 +29,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `title`, errorMessage: `Поле title - обязательное текстовое поле`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `title`, errorMessage: `Поле title - обязательное текстовое поле`}]);
     });
 
     it(`Should validate title`, () => {
@@ -41,7 +45,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `title`, errorMessage: `Заголовок должен быть в переделах 30 ... 140 символов`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `title`, errorMessage: `Заголовок должен быть в переделах 30 ... 140 символов`}]);
     });
   });
 
@@ -59,7 +63,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `type`, errorMessage: `Поле type - обязательное текстовое поле`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `type`, errorMessage: `Поле type - обязательное текстовое поле`}]);
     });
 
     it(`Should be one of the list`, () => {
@@ -75,7 +79,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(200);
+          expect(status.OK);
     });
 
     it(`Should show error if type is not from the list`, () => {
@@ -91,7 +95,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `type`, errorMessage: `Поле type - должно быть значением одно из flat, house, bungalo, palace`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `type`, errorMessage: `Поле type - должно быть значением одно из flat,house,bungalo,palace`}]);
     });
   });
 
@@ -109,7 +113,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `price`, errorMessage: `Поле price - обязательное числовое поле`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `price`, errorMessage: `Поле price - обязательное числовое поле`}]);
     });
 
     it(`Should be from 1 to 100000`, () => {
@@ -125,7 +129,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(200);
+          expect(status.OK);
     });
 
     it(`Should show error if price is less than 1`, () => {
@@ -141,7 +145,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `price`, errorMessage: `Поле price - число в интервале от 1 до 100 000`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `price`, errorMessage: `Поле price - число в интервале от 1 до 100000`}]);
     });
 
     it(`Should show error if price is more than 100000`, () => {
@@ -149,7 +153,7 @@ describe(`Validation`, () => {
           send({
             type: `bungalo`,
             title,
-            price: `200000`,
+            price: `300000`,
             address,
             checkin,
             checkout,
@@ -157,7 +161,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `price`, errorMessage: `Поле price - число в интервале от 1 до 100 000`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `price`, errorMessage: `Поле price - число в интервале от 1 до 100000`}]);
     });
   });
 
@@ -175,7 +179,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `address`, errorMessage: `Поле address - обязательное текстовое поле`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `address`, errorMessage: `Поле address - обязательное текстовое поле`}]);
     });
 
     it(`Should be lesser than 100`, () => {
@@ -191,7 +195,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `address`, errorMessage: `Поле address должно быть размером до 100 символов`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `address`, errorMessage: `Поле address должно быть размером до 100 символов`}]);
     });
   });
 
@@ -209,7 +213,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `checkin`, errorMessage: `Поле checkin - обязательное текстовое поле`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `checkin`, errorMessage: `Поле checkin - обязательное текстовое поле`}]);
     });
 
     it(`Should check format`, () => {
@@ -225,7 +229,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(200);
+          expect(status.OK);
     });
 
     it(`Should show error if format is not correct`, () => {
@@ -241,7 +245,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `checkin`, errorMessage: `Поле checkin должно быть в формате HH:mm`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `checkin`, errorMessage: `Поле checkin должно быть в формате HH:mm`}]);
     });
   });
 
@@ -259,7 +263,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `checkout`, errorMessage: `Поле checkout - обязательное текстовое поле`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `checkout`, errorMessage: `Поле checkout - обязательное текстовое поле`}]);
     });
 
     it(`Should check format`, () => {
@@ -275,7 +279,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(200);
+          expect(status.OK);
     });
 
     it(`Should show error if format is not correct`, () => {
@@ -291,7 +295,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `checkout`, errorMessage: `Поле checkout должно быть в формате HH:mm`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `checkout`, errorMessage: `Поле checkout должно быть в формате HH:mm`}]);
     });
   });
 
@@ -309,7 +313,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `rooms`, errorMessage: `Поле rooms - числовое поле`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `rooms`, errorMessage: `Поле rooms - числовое поле`}]);
     });
 
     it(`Should show error if rooms less than 0`, () => {
@@ -325,7 +329,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `rooms`, errorMessage: `Поле rooms должно находиться в интервале от 0 до 1000`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `rooms`, errorMessage: `Поле rooms должно находиться в интервале от 0 до 1000`}]);
     });
 
     it(`Should show error if rooms more than 100`, () => {
@@ -341,7 +345,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `rooms`, errorMessage: `Поле rooms должно находиться в интервале от 0 до 1000`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `rooms`, errorMessage: `Поле rooms должно находиться в интервале от 0 до 1000`}]);
     });
   });
 
@@ -359,7 +363,7 @@ describe(`Validation`, () => {
             features,
             name
           }).
-          expect(200);
+          expect(status.OK);
     });
 
     it(`Should show error if it is duplicate`, () => {
@@ -375,7 +379,7 @@ describe(`Validation`, () => {
             features: [`washer`, `washer`, `dishwasher`],
             name
           }).
-          expect(400, [{error: `Validation Error`, fieldName: `features`, errorMessage: `Поле features должно состоять из неповторяющиеся значений`}]);
+          expect(status.BAD_REQUEST, [{error: `Validation Error`, fieldName: `features`, errorMessage: `Поле features должно состоять из неповторяющиеся значений`}]);
     });
   });
 
@@ -392,7 +396,7 @@ describe(`Validation`, () => {
             rooms,
             features: [`washer`, `dishwasher`],
           }).
-          expect(200)
+          expect(status.OK)
           .then((response) => assert(response.body.name.length > 0, true)); // eslint-disable-line
     });
   });
