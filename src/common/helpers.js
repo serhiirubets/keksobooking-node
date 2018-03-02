@@ -22,9 +22,11 @@ const getRandomUniqArray = (source, length) => {
 };
 
 const getRandomName = () => names[getRandomNumber(0, names.length - 1)];
+const asyncHelper = (fn) => (req, res, next) => fn(req, res, next).catch(next);
 
 module.exports.getRandomNumber = getRandomNumber;
 module.exports.isNumber = isNumber;
 module.exports.getRandomName = getRandomName;
 module.exports.getRandomUniqArray = getRandomUniqArray;
+module.exports.asyncHelper = asyncHelper;
 

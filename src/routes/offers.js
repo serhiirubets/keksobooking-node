@@ -1,7 +1,8 @@
 const {Router} = require(`express`);
 const bodyParser = require(`body-parser`);
 const validator = require(`../common/validation`);
-const {getRandomName} = require(`../common/helpers`);
+const {getRandomName, asyncHelper} = require(`../common/helpers`);
+const dataRenderer = require(`../common/data-renderer`);
 const createStreamFromBuffer = require(`../common/buffer-to-stream`);
 
 const DEFAULT_DATA_LIMIT = 20;
@@ -37,7 +38,7 @@ const getOfferByDate = async (req, res) => {
   res.json(offers.find((it) => it.date === date));
 };
 
-const getAvatar = async (req, res) => {
+const getAvatar = asyncHelper(async (req, res) => {
   const date = Number(req.params[`date`].toLowerCase());
   const offersPromise = await offersRouter.offersStore.getAllOffers();
   const offers = await offersPromise.toArray();
@@ -50,7 +51,7 @@ const getAvatar = async (req, res) => {
   const avatar = offer.avatar;
 
   if (!avatar) {
-    throw new Error(`Wizard with name "${offer}" didn't upload avatar`);
+    throw new Error(`Wizard with name "${offer.name}" didn't upload avatar`);
   }
 
   const {info, stream} = await offersRouter.imageStore.get(avatar.path);
@@ -62,7 +63,7 @@ const getAvatar = async (req, res) => {
   res.set(`content-length`, info.length);
   res.status(200);
   stream.pipe(res);
-};
+});
 
 const saveOffer = async (req, res) => {
   const responseData = Object.assign({}, req.body, {name: req.body.name || getRandomName()});
@@ -97,6 +98,11 @@ offersRouter.post(``, upload.single(`avatar`), saveOffer);
 offersRouter.get(`/:date`, getOfferByDate);
 
 offersRouter.get(`/:date/avatar`, getAvatar);
+
+offersRouter.use((exception, req, res, next) => {
+  dataRenderer.renderException(req, res, exception);
+  next();
+});
 
 module.exports = (offersStore, imageStore) => {
   offersRouter.offersStore = offersStore;
