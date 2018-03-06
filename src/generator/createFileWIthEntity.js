@@ -1,5 +1,6 @@
 const fs = require(`fs`);
 const readline = require(`readline`);
+const logger = require(`../common/logger`);
 const {generateEntity} = require(`./generateEntity`);
 
 const MAX_ELEMENTS_LENGTH = 100;
@@ -45,7 +46,7 @@ const writeFile = () => {
     }
 
     progress = {};
-    console.log(`File was succesfully saved \n`);
+    logger.log(`File was succesfully saved \n`);
     process.exit(0);
   });
 };
@@ -61,7 +62,7 @@ const createFile = (filename) => {
       return;
     }
 
-    console.log(
+    logger.log(
         `File with ${filename} has already extist. Would you like to rewrite it ? \n`
     );
   });
@@ -136,11 +137,11 @@ rl
         return;
       }
 
-      console.log(`Something go wrong`);
+      logger.error(`Something goes wrong`);
       progress.exit(1);
     })
     .on(`close`, () => {
-      console.log(`Have a great day!`);
+      logger.log(`Have a great day!`);
       process.exit(0);
     });
 

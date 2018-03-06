@@ -43,7 +43,6 @@ const getAvatar = asyncHelper(async (req, res) => {
   const offersPromise = await offersRouter.offersStore.getAllOffers();
   const offers = await offersPromise.toArray();
   const offer = offers.find((it) => it.date === date);
-
   if (!offer) {
     res.send(`Offer with this date is not exist`);
     return;
@@ -66,7 +65,24 @@ const getAvatar = asyncHelper(async (req, res) => {
 });
 
 const saveOffer = async (req, res) => {
-  const responseData = Object.assign({}, req.body, {name: req.body.name || getRandomName()});
+  const address = req.body.address.split(`,`);
+  const responseData = {
+    author: {name: req.body.name || getRandomName()},
+    offer: {
+      title: req.body.title,
+      address: req.body.address,
+      description: req.body.description,
+      price: req.body.price,
+      type: req.body.type,
+      rooms: req.body.rooms,
+      guests: req.body.capacity,
+      checkin: req.body.timein,
+      checkout: req.body.checkout,
+      features: req.body.features,
+    },
+    location: {x: address[0], y: address[1]}
+  };
+
   const errors = validator(responseData);
 
   responseData.date = Date.now();
@@ -79,13 +95,13 @@ const saveOffer = async (req, res) => {
   const avatar = req.file;
 
   if (avatar) {
-    responseData.avatar = avatar;
     const avatarInfo = {
       path: `/api/offers/${responseData.date}/avatar`,
       mimetype: avatar.mimetype
     };
 
     await offersRouter.imageStore.save(avatarInfo.path, createStreamFromBuffer(avatar.buffer));
+    responseData.author.avatar = avatarInfo.path;
     responseData.avatar = avatarInfo;
   }
 
