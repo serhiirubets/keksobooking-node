@@ -1,22 +1,24 @@
 const assert = require(`assert`);
 const request = require(`supertest`);
 const mockOffersRouter = require(`./mock-offers-router`);
-const {status} = require(`../src/common/config`);
+const {Status} = require(`../src/common/config`);
 const app = require(`express`)();
 
 app.use(`/api/offers`, mockOffersRouter);
 
 const name = `Pavel`;
 const title = `Маленькая квартирка рядом с парком Маленькая квартирка рядом с парком Маленькая чистая квратира на краю парка.`;
-const address = `Маленькая квартирка рядом с парком`;
 const description = `Маленькая чистая квратира на краю парка. Без интернета, регистрации и СМС.`;
 const price = 30000;
 const type = `flat`;
 const rooms = 1;
-const guests = 5;
-const checkin = `12:00`;
-const checkout = `12:00`;
+const capacity = 5;
+const timein = `12:00`;
+const timeout = `12:00`;
 const features = [`elevator`, `conditioner`];
+const address = `500, 600`;
+const expectedLocationX = 500;
+const expectedLocationY = 600;
 
 describe(`GET /api/offers`, function () {
   const expectedDataLength = 4;
@@ -25,7 +27,7 @@ describe(`GET /api/offers`, function () {
     return request(app)
         .get(`/api/offers`)
         .set(`Accept`, `application/json`)
-        .expect(status.OK)
+        .expect(Status.OK)
         .expect(`Content-Type`, /json/)
         .then((response) => {
           const respnseData = response.body;
@@ -39,7 +41,7 @@ describe(`GET /api/offers`, function () {
     return request(app)
         .get(`/api/offers?limit=10`)
         .set(`Accept`, `application/json`)
-        .expect(status.OK)
+        .expect(Status.OK)
         .expect(`Content-Type`, /json/)
         .then((response) => {
           const respnseData = response.body;
@@ -53,7 +55,7 @@ describe(`GET /api/offers`, function () {
     return request(app)
         .get(`/api/offers?skip=15`)
         .set(`Accept`, `application/json`)
-        .expect(status.OK)
+        .expect(Status.OK)
         .expect(`Content-Type`, /json/)
         .then((response) => {
           const respnseData = response.body;
@@ -67,7 +69,7 @@ describe(`GET /api/offers`, function () {
     return request(app)
         .get(`/api/offers?skip=5&limit=8`)
         .set(`Accept`, `application/json`)
-        .expect(status.OK)
+        .expect(Status.OK)
         .expect(`Content-Type`, /json/)
         .then((response) => {
           const respnseData = response.body;
@@ -80,21 +82,21 @@ describe(`GET /api/offers`, function () {
   it(`Should return offer by date`, () => {
     return request(app)
         .get(`/api/offers/121`)
-        .expect(status.OK)
+        .expect(Status.OK)
         .expect(`Content-Type`, /json/);
   });
 
   it(`Should return offer\`s avatar by date`, () => {
     return request(app)
         .get(`/api/offers/1519472613744/avatar`)
-        .expect(status.OK);
+        .expect(Status.OK);
   });
 
   it(`unknown address should respond with 404`, () => {
     return request(app)
         .get(`/api/offersfes`)
         .set(`Accept`, `application/json`)
-        .expect(status.NOT_FOUND)
+        .expect(Status.NOT_FOUND)
         .expect(`Content-Type`, /html/);
   });
 });
@@ -110,24 +112,26 @@ describe(`POST /api/offers`, function () {
           price,
           type,
           rooms,
-          guests,
-          checkin,
-          checkout,
-          features
+          capacity,
+          timein,
+          timeout,
+          features,
         }).
-        expect(status.OK).
+        expect(Status.OK).
         expect(({body}) => {
-          assert.ok(body.name, name);
-          assert.ok(body.title, title);
-          assert.ok(body.address, address);
-          assert.ok(body.description, description);
-          assert.ok(body.price, price);
-          assert.ok(body.type, type);
-          assert.ok(body.rooms, rooms);
-          assert.ok(body.guests, guests);
-          assert.ok(body.checkin, checkin);
-          assert.ok(body.checkout, checkout);
-          assert.ok(body.features, features);
+          assert.ok(body.author.name, name);
+          assert.ok(body.offer.title, title);
+          assert.ok(body.offer.address, address);
+          assert.ok(body.offer.description, description);
+          assert.ok(body.offer.price, price);
+          assert.ok(body.offer.type, type);
+          assert.ok(body.offer.rooms, rooms);
+          assert.ok(body.offer.guests, capacity);
+          assert.ok(body.offer.checkin, timein);
+          assert.ok(body.offer.checkout, timeout);
+          assert.ok(body.offer.features, features);
+          assert.ok(body.location.x, expectedLocationX);
+          assert.ok(body.location.y, expectedLocationY);
         });
   });
 
@@ -138,25 +142,26 @@ describe(`POST /api/offers`, function () {
         field(`title`, title).
         field(`address`, address).
         field(`price`, price).
-        field(`checkin`, checkin).
-        field(`checkout`, checkout).
+        field(`timein`, timein).
+        field(`timeout`, timeout).
         field(`rooms`, rooms).
         field(`name`, name).
-        field(`guests`, guests).
+        field(`capacity`, capacity).
         field(`features`, features).
-        expect(status.OK).
+        expect(Status.OK).
         expect(({body}) => {
-          assert.ok(body.name, name);
-          assert.ok(body.title, title);
-          assert.ok(body.address, address);
-          assert.ok(body.description, description);
-          assert.ok(body.price, price);
-          assert.ok(body.type, type);
-          assert.ok(body.rooms, rooms);
-          assert.ok(body.guests, guests);
-          assert.ok(body.checkin, checkin);
-          assert.ok(body.checkout, checkout);
-          assert.ok(body.features, features);
+          assert.ok(body.author.name, name);
+          assert.ok(body.offer.title, title);
+          assert.ok(body.offer.description, description);
+          assert.ok(body.offer.price, price);
+          assert.ok(body.offer.type, type);
+          assert.ok(body.offer.rooms, rooms);
+          assert.ok(body.offer.guests, capacity);
+          assert.ok(body.offer.checkin, timein);
+          assert.ok(body.offer.checkout, timeout);
+          assert.ok(body.offer.features, features);
+          assert.ok(body.location.x, expectedLocationX);
+          assert.ok(body.location.y, expectedLocationY);
         });
   });
 
@@ -167,26 +172,27 @@ describe(`POST /api/offers`, function () {
         field(`title`, title).
         field(`address`, address).
         field(`price`, price).
-        field(`checkin`, checkin).
-        field(`checkout`, checkout).
+        field(`timein`, timein).
+        field(`timeout`, timeout).
         field(`rooms`, rooms).
         field(`name`, name).
-        field(`guests`, guests).
+        field(`capacity`, capacity).
         field(`features`, features).
         attach(`avatar`, `test/fixtures/keks.png`).
-        expect(status.OK).
+        expect(Status.OK).
         expect(({body}) => {
-          assert.ok(body.name, name);
-          assert.ok(body.title, title);
-          assert.ok(body.address, address);
-          assert.ok(body.description, description);
-          assert.ok(body.price, price);
-          assert.ok(body.type, type);
-          assert.ok(body.rooms, rooms);
-          assert.ok(body.guests, guests);
-          assert.ok(body.checkin, checkin);
-          assert.ok(body.checkout, checkout);
-          assert.ok(body.features, features);
+          assert.ok(body.author.name, name);
+          assert.ok(body.offer.title, title);
+          assert.ok(body.offer.description, description);
+          assert.ok(body.offer.price, price);
+          assert.ok(body.offer.type, type);
+          assert.ok(body.offer.rooms, rooms);
+          assert.ok(body.offer.guests, capacity);
+          assert.ok(body.offer.checkin, timein);
+          assert.ok(body.offer.checkout, timeout);
+          assert.ok(body.offer.features, features);
+          assert.ok(body.location.x, expectedLocationX);
+          assert.ok(body.location.y, expectedLocationY);
           assert.ok(typeof body.avatar.path, `string`);
           assert.ok(typeof body.avatar.mimetype, `string`);
         });

@@ -1,12 +1,8 @@
 module.exports = {
-  status: {
+  Status: {
     OK: 200,
     BAD_REQUEST: 400,
     NOT_FOUND: 404
-  },
-  server: {
-    port: 3000,
-    hostname: `127.0.0.1`
   },
   contentType: {
     html: `text/html; charset=UTF-8`,

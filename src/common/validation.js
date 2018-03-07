@@ -148,16 +148,34 @@ const rules = {
   },
 };
 
-module.exports = (data) => {
+function validateOfferKeys(offer) {
   const errors = [];
-  const keys = Object.keys(data);
+  const offerKeys = Object.keys(offer);
 
-  keys.forEach((key) => {
-    const rule = rules[key] && rules[key](data[key]);
+  for (let key of offerKeys) {
+    const rule = rules[key] && rules[key](offer[key]);
     if (rule && rule.error) {
       errors.push(rule);
     }
-  });
+  }
 
   return errors;
+}
+
+function validateLocation(location) {
+  const errors = [];
+  const addressRule = rules.address(location.toString());
+
+  if (addressRule && addressRule.error) {
+    errors.push(addressRule);
+  }
+
+  return errors;
+}
+
+module.exports = ({offer, location}) => {
+  return [
+    ...validateOfferKeys(offer),
+    ...validateLocation(location)
+  ];
 };
