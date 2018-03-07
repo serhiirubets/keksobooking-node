@@ -1,7 +1,7 @@
 const fs = require(`fs`);
 const readline = require(`readline`);
 const logger = require(`../common/logger`);
-const {generateEntity} = require(`./generateEntity`);
+const {generateEntity} = require(`./generate-entity`);
 
 const MAX_ELEMENTS_LENGTH = 100;
 const MIN_ELEMENTS_LENGTH = 1;

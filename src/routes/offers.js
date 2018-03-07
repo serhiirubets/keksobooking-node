@@ -77,7 +77,7 @@ const saveOffer = async (req, res) => {
       rooms: req.body.rooms,
       guests: req.body.capacity,
       checkin: req.body.timein,
-      checkout: req.body.checkout,
+      checkout: req.body.timeout,
       features: req.body.features,
     },
     location: {x: address[0], y: address[1]}

@@ -1,5 +1,5 @@
 const createOffersRouter = require(`../src/routes/offers`);
-const {generateEntity} = require(`../src/generator/generateEntity`);
+const {generateEntity} = require(`../src/generator/generate-entity`);
 
 const offers = [];
 

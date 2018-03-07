@@ -4,7 +4,7 @@
   "description": "This is backend for keksobooking",
   "main": "index.js",
   "scripts": {
-    "test:lint": "eslint .",
+    "test:lint": "eslint ./src ./test",
     "test:mocha": "mocha",
     "test": "npm run test:lint && npm run test:mocha"
   },
