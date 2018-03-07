@@ -148,7 +148,7 @@ const rules = {
   },
 };
 
-function validateOfferKeys(offer) {
+const validateOfferKeys = (offer) => {
   const errors = [];
   const offerKeys = Object.keys(offer);
 
@@ -160,9 +160,9 @@ function validateOfferKeys(offer) {
   }
 
   return errors;
-}
+};
 
-function validateLocation(location) {
+const validateLocation = (location) => {
   const errors = [];
   const addressRule = rules.address(location.toString());
 
@@ -171,7 +171,7 @@ function validateLocation(location) {
   }
 
   return errors;
-}
+};
 
 module.exports = ({offer, location}) => {
   return [
