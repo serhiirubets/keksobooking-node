@@ -20,7 +20,7 @@ const address = `500, 600`;
 const expectedLocationX = 500;
 const expectedLocationY = 600;
 
-describe(`GET /api/offers`, function () {
+describe(`GET /api/offers`, () => {
   const expectedDataLength = 4;
 
   it(`Should respond default json`, () => {
@@ -101,7 +101,7 @@ describe(`GET /api/offers`, function () {
   });
 });
 
-describe(`POST /api/offers`, function () {
+describe(`POST /api/offers`, () => {
   it(`should save offer`, () => {
     return request(app).post(`/api/offers`).
         send({
